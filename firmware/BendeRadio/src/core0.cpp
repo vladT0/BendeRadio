@@ -63,13 +63,16 @@ void anim_search() {
         pos += dir;
         if (pos >= 6) dir = -1;
         if (pos <= 0) dir = 1;
+        xSemaphoreTake(xMutex, portMAX_DELAY);
         mtrx.rect(ANALYZ_WIDTH, 2, ANALYZ_WIDTH + 16 - 1, 5, GFX_FILL);
         draw_eyeb(0, pos, 3);
         draw_eyeb(1, pos, 3);
         mtrx.update();
+        xSemaphoreGive(xMutex); // release mutex
     }
 }
 void change_state() {
+    xSemaphoreTake(xMutex, portMAX_DELAY);
     mtrx.clear();
     if (data.state) {
         upd_bright();
@@ -87,6 +90,7 @@ void change_state() {
         draw_eyeb(1, 3, 5);
     }
     mtrx.update();
+    xSemaphoreGive(xMutex); // release mutex
 }
 
 // ========================= ANALYZ =========================

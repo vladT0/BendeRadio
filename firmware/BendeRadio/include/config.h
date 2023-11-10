@@ -1,8 +1,5 @@
 #pragma once
 
-#define AP_SSID "***"
-#define AP_PASS "***"
-
 #define I2S_DOUT 25
 #define I2S_BCLK 27
 #define I2S_LRC 26

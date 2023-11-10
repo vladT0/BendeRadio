@@ -14,6 +14,7 @@ struct Data {
     int8_t station = 0;
 };
 
+extern SemaphoreHandle_t  xMutex;
 extern Audio audio;
 extern const char* reconnect;
 
