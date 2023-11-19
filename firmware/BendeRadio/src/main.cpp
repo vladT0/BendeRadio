@@ -76,8 +76,7 @@ uint8_t wifi_connect(uint32_t connectTimeout)
             auto startTime = millis();
             // wait for connection, fail, or timeout
             while(status != WL_CONNECTED && status != WL_NO_SSID_AVAIL && status != WL_CONNECT_FAILED && (millis() - startTime) <= connectTimeout) {
-                anim_search();
-		delay(10);
+		        delay(10);
                 status = WiFi.status();
             }
 
@@ -116,7 +115,7 @@ void setup() {
     delay(1000);
 
     while (wifi_connect(connectTimeoutMs) != WL_CONNECTED) {
-        anim_search();
+        delay(250);
     }
     change_state();
 }

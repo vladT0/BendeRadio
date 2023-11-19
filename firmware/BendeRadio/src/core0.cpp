@@ -57,24 +57,26 @@ void draw_eyeb(uint8_t i, int x, int y, int w = 2) {
     mtrx.rect(x, y, x + w - 1, y + w - 1, GFX_CLEAR);
 }
 void anim_search() {
-    static int8_t pos = 4, dir = 1;
-    static Tmr tmr(50);
-    if (tmr) {
-        pos += dir;
-        if (pos >= 6) dir = -1;
-        if (pos <= 0) dir = 1;
-        if(xSemaphoreTake(xMutex, portMAX_DELAY))
-        {
+    if(xMutex == NULL) return;
+    if(xSemaphoreTake(xMutex, portMAX_DELAY) == pdTRUE)
+    {        
+        static int8_t pos = 4, dir = 1;
+        static Tmr tmr(50);
+        if (tmr) {
+            pos += dir;
+            if (pos >= 6) dir = -1;
+            if (pos <= 0) dir = 1;
             mtrx.rect(ANALYZ_WIDTH, 2, ANALYZ_WIDTH + 16 - 1, 5, GFX_FILL);
             draw_eyeb(0, pos, 3);
             draw_eyeb(1, pos, 3);
             mtrx.update();
-            xSemaphoreGive(xMutex); // release mutex
         }
+        xSemaphoreGive(xMutex); // release mutex
     }
 }
 void change_state() {
-    if(xSemaphoreTake(xMutex, portMAX_DELAY))
+    if(xMutex == NULL) return;
+    if(xSemaphoreTake(xMutex, portMAX_DELAY) == pdTRUE)
     {
         mtrx.clear();
         if (data.state) {
