@@ -63,34 +63,38 @@ void anim_search() {
         pos += dir;
         if (pos >= 6) dir = -1;
         if (pos <= 0) dir = 1;
-        xSemaphoreTake(xMutex, portMAX_DELAY);
-        mtrx.rect(ANALYZ_WIDTH, 2, ANALYZ_WIDTH + 16 - 1, 5, GFX_FILL);
-        draw_eyeb(0, pos, 3);
-        draw_eyeb(1, pos, 3);
-        mtrx.update();
-        xSemaphoreGive(xMutex); // release mutex
+        if(xSemaphoreTake(xMutex, portMAX_DELAY))
+        {
+            mtrx.rect(ANALYZ_WIDTH, 2, ANALYZ_WIDTH + 16 - 1, 5, GFX_FILL);
+            draw_eyeb(0, pos, 3);
+            draw_eyeb(1, pos, 3);
+            mtrx.update();
+            xSemaphoreGive(xMutex); // release mutex
+        }
     }
 }
 void change_state() {
-    xSemaphoreTake(xMutex, portMAX_DELAY);
-    mtrx.clear();
-    if (data.state) {
-        upd_bright();
-        square_tmr.start(600);
-        draw_eye(0);
-        draw_eye(1);
-        draw_eyeb(0, 2, 2, 4);
-        draw_eyeb(1, 2, 2, 4);
-    } else {
-        mtrx.setBright((uint8_t)0);
-        draw_eye(0);
-        draw_eye(1);
-        mtrx.rect(ANALYZ_WIDTH, 0, ANALYZ_WIDTH + 16 - 1, 3, GFX_CLEAR);
-        draw_eyeb(0, 3, 5);
-        draw_eyeb(1, 3, 5);
+    if(xSemaphoreTake(xMutex, portMAX_DELAY))
+    {
+        mtrx.clear();
+        if (data.state) {
+            upd_bright();
+            square_tmr.start(600);
+            draw_eye(0);
+            draw_eye(1);
+            draw_eyeb(0, 2, 2, 4);
+            draw_eyeb(1, 2, 2, 4);
+        } else {
+            mtrx.setBright((uint8_t)0);
+            draw_eye(0);
+            draw_eye(1);
+            mtrx.rect(ANALYZ_WIDTH, 0, ANALYZ_WIDTH + 16 - 1, 3, GFX_CLEAR);
+            draw_eyeb(0, 3, 5);
+            draw_eyeb(1, 3, 5);
+        }
+        mtrx.update();
+        xSemaphoreGive(xMutex); // release mutex
     }
-    mtrx.update();
-    xSemaphoreGive(xMutex); // release mutex
 }
 
 // ========================= ANALYZ =========================
