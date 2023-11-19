@@ -1,11 +1,12 @@
 #include "core0.h"
-
 #include <EEManager.h>
 #include <EncButton.h>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattributes"
 #include <FastLED.h>
+#pragma GCC diagnostic pop
 #include <GyverMAX7219.h>
 #include <VolAnalyzer.h>
-
 #include "soc/timer_group_reg.h"
 #include "soc/timer_group_struct.h"
 #include "tmr.h"
@@ -57,7 +58,6 @@ void draw_eyeb(uint8_t i, int x, int y, int w = 2) {
     mtrx.rect(x, y, x + w - 1, y + w - 1, GFX_CLEAR);
 }
 void anim_search() {
-    if(xMutex == NULL) return;
     if(xSemaphoreTake(xMutex, portMAX_DELAY) == pdTRUE)
     {        
         static int8_t pos = 4, dir = 1;
@@ -75,7 +75,6 @@ void anim_search() {
     }
 }
 void change_state() {
-    if(xMutex == NULL) return;
     if(xSemaphoreTake(xMutex, portMAX_DELAY) == pdTRUE)
     {
         mtrx.clear();
@@ -138,11 +137,11 @@ void analyz1(uint8_t vol) {
 void audio_showstreamtitle(const char* info) {
 }
 
-void core0(void* p) {
+void core0(void *p) {
     // ========================= SETUP =========================
     EncButton eb(ENC_S1, ENC_S2, ENC_BTN);
     VolAnalyzer sound(ANALYZ_PIN);
-    sound.setAmpliDt(300);
+    sound.setAmpliDt(255); // originally was 300
     sound.setTrsh(data.trsh);
     sound.setPulseMin(40);
     sound.setPulseMax(80);

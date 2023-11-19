@@ -1,8 +1,14 @@
+#ifndef _core0_h
+#define _core0_h
+
 #pragma once
 #include <Arduino.h>
 #include <Audio.h>
-
 #include "config.h"
+
+//MAX_SPI_SPEED must be defined before #include <GyverMAX7219.h>
+//in other case it will be redifined to 1000000
+#define MAX_SPI_SPEED 250000
 
 struct Data {
     bool state = 0;
@@ -21,3 +27,5 @@ extern const char* reconnect;
 void change_state();
 void anim_search();
 void core0(void *p);
+
+#endif

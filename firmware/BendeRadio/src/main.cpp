@@ -3,8 +3,7 @@
 
 #include "config.h"
 #include "core0.h"
-
-#define MAX_SPI_SPEED 250000
+#include "core1.h"
 
 //specify here number of your WIFI networks
 #define NET_NUM 2
@@ -21,7 +20,7 @@ const char* ap_pass[NET_NUM] = {
     "xxx",
 };
 
-TaskHandle_t Task0;
+TaskHandle_t Task0,Task1;
 SemaphoreHandle_t  xMutex;
 
 const uint32_t connectTimeoutMs = 10000;
@@ -106,26 +105,27 @@ uint8_t wifi_connect(uint32_t connectTimeout)
       if(scanResult == WIFI_SCAN_FAILED || scanResult == WIFI_SCAN_RUNNING ) 
         return WL_NO_SSID_AVAIL;
     }
+    return status;
 }
 
 void setup() {
-    xMutex = xSemaphoreCreateMutex();
-    xTaskCreatePinnedToCore(core0, "Task0", 10000, NULL, 1, &Task0, 0);
     Serial.begin(115200);
-    delay(1000);
-
-    while (wifi_connect(connectTimeoutMs) != WL_CONNECTED) {
-        delay(250);
+    delay(500);
+    xMutex = xSemaphoreCreateMutex();
+    if (xMutex != NULL) {
+        xTaskCreatePinnedToCore(core0, "Task0", 10000, NULL, 1, &Task0, 1);
+        while (wifi_connect(connectTimeoutMs) != WL_CONNECTED) {
+            delay(250);
+        }
+        change_state();
+        xTaskCreatePinnedToCore(core1, "Task1", 10000, NULL, 1, &Task1, 0);
     }
-    change_state();
+    else {
+        Serial.println("Mutex creation failed! Check available heap memory.");
+    }
+
 }
 
 void loop() {
-    audio.loop();
-
-    if (reconnect) {
-        audio.connecttohost(reconnect);
-        if (!audio.isRunning()) audio.pauseResume();
-        reconnect = nullptr;
-    }
+    // Empty loop because tasks are running in the FreeRTOS scheduler
 }
