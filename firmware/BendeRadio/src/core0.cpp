@@ -141,7 +141,7 @@ void core0(void *p) {
     // ========================= SETUP =========================
     EncButton eb(ENC_S1, ENC_S2, ENC_BTN);
     VolAnalyzer sound(ANALYZ_PIN);
-    sound.setAmpliDt(255); // originally was 300
+    sound.setAmpliDt(255); // originally was 300, but really 44, as overflow for uint8_t
     sound.setTrsh(data.trsh);
     sound.setPulseMin(40);
     sound.setPulseMax(80);
